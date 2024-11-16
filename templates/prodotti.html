@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/styles.css">
+    <title>Prodotti</title>
+</head>
+<body>
+    <header>
+        <h1>Db forniture - Prodotti</h1>
+    </header>
+    <main>
+        <h1>Elenco Prodotti</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Barcode</th>
+                    <th>Nome</th>
+                    <th>Peso</th>
+                    <th>Categoria</th>
+                    <th>Prezzo</th>
+                    <th>Id Fornitura</th>
+                    <th>Visualizza</th>
+                    <th>Elimina</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for prodotto in prodotti %}
+                <tr>
+                    <td>{{ prodotto[0] }}</td>
+                    <td>{{ prodotto[1] }}</td>
+                    <td>{{ prodotto[2] }}</td>
+                    <td>{{ prodotto[3] }}</td>
+                    <td>{{ prodotto[4] }}</td>
+                    <td>{{ prodotto[5] }}</td>
+                    <td><a href="/visualizza_prodotto/{{ prodotto[0] }}">Visualizza</a></td>
+                    <td><button onclick="eliminaProdotto('{{ prodotto[0] }}')">Elimina</button></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="aggiungi_prodotto">
+            <label for="barcode">Barcode</label><input type="text" id="barcode" size="26">
+            <label for="nome">Nome</label><input type="text" id="nome" size="26">
+            <label for="peso">Peso</label><input type="text" id="peso" size="26">
+            <label for="categoria">Categoria</label><input type="text" id="categoria" size="26">
+            <label for="prezzo">Prezzo</label><input type="text" id="prezzo" size="26">
+            <label for="id_fornitura">Id Fornitura</label><input type="text" id="id_fornitura" size="26">
+            <button onclick="controllaEInvia()">Aggiungi Prodotto</button>
+        </div>
+    </main>
+    <script>
+        function eliminaProdotto(barcode) {
+            const formData = new FormData();
+            const xhr = new XMLHttpRequest();
+            formData.append('barcode', barcode);
+            xhr.open('POST', '/elimina_prodotto', true);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    alert('Prodotto eliminato con successo');
+                }
+            };
+            xhr.send(formData);
+        }
+
+        function controllaEInvia() {
+            const formData = new FormData();
+            formData.append('barcode', document.getElementById('barcode').value);
+            if (document.getElementById('barcode').value === '') {
+                alert('Inserisci un barcode');
+                return;
+            }
+            formData.append('nome', document.getElementById('nome').value);
+            formData.append('peso', document.getElementById('peso').value);
+            formData.append('categoria', document.getElementById('categoria').value);
+            formData.append('prezzo', document.getElementById('prezzo').value);
+            formData.append('id_fornitura', document.getElementById('id_fornitura').value);
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/check_aggiunta_prodotto', true); // Modifica l'URL in base alla tua route
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    const response = JSON.parse(xhr.responseText);
+                    alert(response); // Mostra il messaggio di risposta
+                }
+            };
+            xhr.send(formData);
+        }
+    </script>
+    <footer>
+        <a href="/register">Registrati</a>
+        <a href="/reset-password">Password dimenticata?</a>
+        <a href="/privacy-policy">Privacy Policy</a>
+        <a href="/terms-and-conditions">Termini e Condizioni</a>
+        <a href="/view_add_user">Aggiungi utente</a>
+    </footer>
+</body>
+</html>
